@@ -1,10 +1,13 @@
-package draylar.inmis.mixin;
+package draylar.inmis.mixin.client;
 
 import draylar.inmis.item.BackpackItem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 
+@Environment(EnvType.CLIENT)
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
 

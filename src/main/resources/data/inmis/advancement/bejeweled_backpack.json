@@ -1,15 +1,15 @@
 {
     "display": {
         "title": {
-            "translate": "inmis.advancement.withered_backpack.title"
+            "translate": "inmis.advancement.bejeweled_backpack.title"
         },
         "description": {
-            "translate": "inmis.advancement.withered_backpack.description"
+            "translate": "inmis.advancement.bejeweled_backpack.description"
         },
         "icon": {
-            "item": "inmis:withered_backpack"
+            "id": "inmis:bejeweled_backpack"
         },
-        "frame": "goal",
+        "frame": "task",
         "show_toast": true,
         "announce_to_chat": true,
         "hidden": false
@@ -21,12 +21,12 @@
                 "items": [
                     {
                         "items": [
-                            "inmis:withered_backpack"
+                            "inmis:bejeweled_backpack"
                             ]
                     }
                 ]
             }
         }
     },
-    "parent": "inmis:bejeweled_backpack"
+    "parent": "inmis:gilded_backpack"
 }

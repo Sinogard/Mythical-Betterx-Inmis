@@ -5,7 +5,8 @@ import draylar.inmis.api.Dimension;
 import draylar.inmis.api.Point;
 import draylar.inmis.config.BackpackInfo;
 import draylar.inmis.item.BackpackItem;
-import draylar.inmis.util.InventoryUtils;
+import draylar.inmis.item.component.BackpackComponent;
+import draylar.inmis.network.packet.BackpackScreenPacket;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -14,11 +15,10 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
+import net.minecraft.util.Identifier;
 
 public class BackpackScreenHandler extends ScreenHandler {
 
@@ -26,58 +26,46 @@ public class BackpackScreenHandler extends ScreenHandler {
     private final int padding = 8;
     private final int titleSpace = 10;
 
-    public BackpackScreenHandler(int synchronizationID, PlayerInventory playerInventory, PacketByteBuf packetByteBuf) {
-        this(synchronizationID, playerInventory, packetByteBuf.readItemStack());
+    public BackpackScreenHandler(int synchronizationID, PlayerInventory playerInventory, BackpackScreenPacket backpackScreenPacket) {
+        this(synchronizationID, playerInventory, backpackScreenPacket.stack());
     }
 
     public BackpackScreenHandler(int synchronizationID, PlayerInventory playerInventory, ItemStack backpackStack) {
-        super(Inmis.CONTAINER_TYPE, synchronizationID);
+        super(Inmis.BACKPACK_SCREEN_HANDLER, synchronizationID);
         this.backpackStack = backpackStack;
 
         if (backpackStack.getItem() instanceof BackpackItem) {
-            setupContainer(playerInventory, backpackStack);
+            Dimension dimension = getDimension();
+            BackpackInfo tier = getItem().getTier();
+            int rowWidth = tier.getRowWidth();
+            int numberOfRows = tier.getNumberOfRows();
+
+            BackpackComponent backpackComponent = backpackStack.getOrDefault(Inmis.BACKPACK_COMPONENT, new BackpackComponent(new SimpleInventory(rowWidth * numberOfRows)));
+            for (int y = 0; y < numberOfRows; y++) {
+                for (int x = 0; x < rowWidth; x++) {
+                    Point backpackSlotPosition = getBackpackSlotPosition(dimension, x, y);
+                    addSlot(new BackpackLockedSlot(backpackComponent.getSimpleInventory(), y * rowWidth + x, backpackSlotPosition.x + 1, backpackSlotPosition.y + 1));
+                }
+            }
+
+            for (int y = 0; y < 3; ++y) {
+                for (int x = 0; x < 9; ++x) {
+                    Point playerInvSlotPosition = getPlayerInvSlotPosition(dimension, x, y);
+                    this.addSlot(new BackpackLockedSlot(playerInventory, x + y * 9 + 9, playerInvSlotPosition.x + 1, playerInvSlotPosition.y + 1));
+                }
+            }
+
+            for (int x = 0; x < 9; ++x) {
+                Point playerInvSlotPosition = getPlayerInvSlotPosition(dimension, x, 3);
+                this.addSlot(new BackpackLockedSlot(playerInventory, x, playerInvSlotPosition.x + 1, playerInvSlotPosition.y + 1));
+            }
+            backpackStack.set(Inmis.BACKPACK_COMPONENT, backpackComponent);
         } else {
             PlayerEntity player = playerInventory.player;
             this.onClosed(player);
         }
     }
 
-    private void setupContainer(PlayerInventory playerInventory, ItemStack backpackStack) {
-        Dimension dimension = getDimension();
-        BackpackInfo tier = getItem().getTier();
-        int rowWidth = tier.getRowWidth();
-        int numberOfRows = tier.getNumberOfRows();
-
-        NbtList tag = backpackStack.getOrCreateNbt().getList("Inventory", NbtElement.COMPOUND_TYPE);
-        BackpackInventory inventory = new BackpackInventory(rowWidth * numberOfRows) {
-            @Override
-            public void markDirty() {
-                backpackStack.getOrCreateNbt().put("Inventory", InventoryUtils.toTag(this));
-                super.markDirty();
-            }
-        };
-
-        InventoryUtils.fromTag(tag, inventory);
-
-        for (int y = 0; y < numberOfRows; y++) {
-            for (int x = 0; x < rowWidth; x++) {
-                Point backpackSlotPosition = getBackpackSlotPosition(dimension, x, y);
-                addSlot(new BackpackLockedSlot(inventory, y * rowWidth + x, backpackSlotPosition.x + 1, backpackSlotPosition.y + 1));
-            }
-        }
-
-        for (int y = 0; y < 3; ++y) {
-            for (int x = 0; x < 9; ++x) {
-                Point playerInvSlotPosition = getPlayerInvSlotPosition(dimension, x, y);
-                this.addSlot(new BackpackLockedSlot(playerInventory, x + y * 9 + 9, playerInvSlotPosition.x + 1, playerInvSlotPosition.y + 1));
-            }
-        }
-
-        for (int x = 0; x < 9; ++x) {
-            Point playerInvSlotPosition = getPlayerInvSlotPosition(dimension, x, 3);
-            this.addSlot(new BackpackLockedSlot(playerInventory, x, playerInvSlotPosition.x + 1, playerInvSlotPosition.y + 1));
-        }
-    }
 
     public BackpackItem getItem() {
         return (BackpackItem) backpackStack.getItem();
@@ -154,11 +142,16 @@ public class BackpackScreenHandler extends ScreenHandler {
                 }
             }
 
+            Item item = stack.getItem();
             // Do not allow players to insert shulkers into backpacks.
-            if (Inmis.CONFIG.disableShulkers && inventory instanceof BackpackInventory) {
-                Item item = stack.getItem();
-                if (item instanceof BlockItem blockItem) {
-                    return !(blockItem.getBlock() instanceof ShulkerBoxBlock);
+            if (inventory instanceof  SimpleInventory) {
+                if (Inmis.CONFIG.disableShulkers) {//&& inventory instanceof BackpackInventory
+                    if (item instanceof BlockItem blockItem) {
+                        return !(blockItem.getBlock() instanceof ShulkerBoxBlock);
+                    }
+                }
+                if (Inmis.CONFIG.blacklist.stream().map(Identifier::of).toList().contains(Registries.ITEM.getId(item))) {
+                    return false;
                 }
             }
 
@@ -167,13 +160,6 @@ public class BackpackScreenHandler extends ScreenHandler {
 
         private boolean stackMovementIsAllowed(ItemStack stack) {
             return !(stack.getItem() instanceof BackpackItem) && stack != backpackStack;
-        }
-    }
-
-    public static class BackpackInventory extends SimpleInventory {
-
-        public BackpackInventory(int slots) {
-            super(slots);
         }
     }
 

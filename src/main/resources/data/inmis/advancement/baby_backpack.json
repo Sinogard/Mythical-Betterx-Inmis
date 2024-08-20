@@ -7,7 +7,7 @@
             "translate": "inmis.advancement.baby_backpack.description"
         },
         "icon": {
-            "item": "inmis:baby_backpack"
+            "id": "inmis:baby_backpack"
         },
         "frame": "task",
         "show_toast": true,

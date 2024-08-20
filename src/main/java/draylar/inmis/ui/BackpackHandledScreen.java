@@ -22,8 +22,8 @@ import net.minecraft.util.Identifier;
 
 public class BackpackHandledScreen extends HandledScreen<BackpackScreenHandler> {
 
-    private static final Identifier GUI_TEXTURE = new Identifier("inmis", "textures/gui/backpack_container.png");
-    private static final Identifier SLOT_TEXTURE = new Identifier("inmis", "textures/gui/backpack_slot.png");
+    private static final Identifier GUI_TEXTURE = Identifier.of("inmis", "textures/gui/backpack_container.png");
+    private static final Identifier SLOT_TEXTURE = Identifier.of("inmis", "textures/gui/backpack_slot.png");
 
     private final int guiTitleColor = Integer.decode(Inmis.CONFIG.guiTitleColor);
 
@@ -51,7 +51,6 @@ public class BackpackHandledScreen extends HandledScreen<BackpackScreenHandler> 
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context);
         super.render(context, mouseX, mouseY, delta);
         this.drawMouseoverTooltip(context, mouseX, mouseY);
     }
@@ -103,12 +102,11 @@ public class BackpackHandledScreen extends HandledScreen<BackpackScreenHandler> 
         RenderSystem.setShaderTexture(0, texture);
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-        bufferBuilder.vertex(matrix4f, x1, y1, z).texture(u1, v1).next();
-        bufferBuilder.vertex(matrix4f, x1, y2, z).texture(u1, v2).next();
-        bufferBuilder.vertex(matrix4f, x2, y2, z).texture(u2, v2).next();
-        bufferBuilder.vertex(matrix4f, x2, y1, z).texture(u2, v1).next();
+        BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
+        bufferBuilder.vertex(matrix4f, x1, y1, z).texture(u1, v1);
+        bufferBuilder.vertex(matrix4f, x1, y2, z).texture(u1, v2);
+        bufferBuilder.vertex(matrix4f, x2, y2, z).texture(u2, v2);
+        bufferBuilder.vertex(matrix4f, x2, y1, z).texture(u2, v1);
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
     }
 

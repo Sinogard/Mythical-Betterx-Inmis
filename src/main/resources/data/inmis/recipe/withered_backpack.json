@@ -1,22 +1,22 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "#f#",
-    "fXf",
-    "#f#"
+    "b#b",
+    "bXb",
+    "bbb"
   ],
   "key": {
     "#": {
-      "item": "minecraft:netherite_ingot"
+      "item": "minecraft:nether_star"
     },
-    "f": {
-      "item": "minecraft:magma_block"
+    "b": {
+      "item": "minecraft:soul_sand"
     },
     "X": {
       "item": "inmis:bejeweled_backpack"
     }
   },
   "result": {
-    "item": "inmis:blazing_backpack"
+    "id": "inmis:withered_backpack"
   }
 }

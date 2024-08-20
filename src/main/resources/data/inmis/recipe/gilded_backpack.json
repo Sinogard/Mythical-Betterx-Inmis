@@ -1,19 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " # ",
+    "###",
     "#X#",
-    " # "
+    "###"
   ],
   "key": {
     "#": {
-      "item": "minecraft:leather"
+      "item": "minecraft:gold_ingot"
     },
     "X": {
-      "item": "minecraft:chest"
+      "item": "inmis:plated_backpack"
     }
   },
   "result": {
-    "item": "inmis:baby_backpack"
+    "id": "inmis:gilded_backpack"
   }
 }

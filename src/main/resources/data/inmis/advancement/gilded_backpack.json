@@ -1,15 +1,15 @@
 {
     "display": {
         "title": {
-            "translate": "inmis.advancement.endless_backpack.title"
+            "translate": "inmis.advancement.gilded_backpack.title"
         },
         "description": {
-            "translate": "inmis.advancement.endless_backpack.description"
+            "translate": "inmis.advancement.gilded_backpack.description"
         },
         "icon": {
-            "item": "inmis:endless_backpack"
+            "id": "inmis:gilded_backpack"
         },
-        "frame": "challenge",
+        "frame": "task",
         "show_toast": true,
         "announce_to_chat": true,
         "hidden": false
@@ -21,12 +21,12 @@
                 "items": [
                     {
                         "items": [
-                            "inmis:endless_backpack"
-                            ]
+                            "inmis:gilded_backpack"
+                        ]
                     }
                 ]
             }
         }
     },
-    "parent": "inmis:withered_backpack"
+    "parent": "inmis:plated_backpack"
 }

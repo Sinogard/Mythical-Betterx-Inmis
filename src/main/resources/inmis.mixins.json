@@ -1,16 +1,14 @@
 {
   "required": true,
   "package": "draylar.inmis.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "PlayerDropMixin",
-    "PlayerInventoryScreenMixin",
-    "ShapedRecipeMixin",
-    "SoundEventAccessor",
-    "client.PlayerEntityFeatureMixin"
+    "ShapedRecipeMixin"
   ],
   "client": [
-    "ItemStackMixin"
+    "client.PlayerEntityFeatureMixin",
+    "client.ItemStackMixin"
   ],
   "injectors": {
     "defaultRequire": 1

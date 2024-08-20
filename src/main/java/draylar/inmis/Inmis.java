@@ -2,25 +2,26 @@ package draylar.inmis;
 
 import draylar.inmis.api.TrinketCompat;
 import draylar.inmis.config.BackpackInfo;
-import draylar.inmis.config.InmisConfig;
-import draylar.inmis.item.*;
+import draylar.inmis.config.InmisClothConfig;
+import draylar.inmis.item.BackpackItem;
+import draylar.inmis.item.EnderBackpackItem;
+import draylar.inmis.item.component.BackpackComponent;
 import draylar.inmis.mixin.trinkets.TrinketsMixinPlugin;
 import draylar.inmis.network.ServerNetworking;
+import draylar.inmis.network.packet.BackpackScreenPacket;
 import draylar.inmis.ui.BackpackScreenHandler;
-import draylar.omegaconfig.OmegaConfig;
+import me.shedaniel.autoconfig.AutoConfig;
+import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.component.ComponentType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -30,10 +31,12 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.UnaryOperator;
 
 public class Inmis implements ModInitializer {
 
@@ -41,14 +44,18 @@ public class Inmis implements ModInitializer {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final Identifier CONTAINER_ID = id("backpack");
     public static final RegistryKey<ItemGroup> GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, CONTAINER_ID);
-    public static final InmisConfig CONFIG = OmegaConfig.register(InmisConfig.class);
-    // public static final ScreenHandlerType<BackpackScreenHandler> CONTAINER_TYPE =
-    // ScreenHandlerRegistry.registerExtended(CONTAINER_ID,
-    // BackpackScreenHandler::new);
-    public static final ScreenHandlerType<BackpackScreenHandler> CONTAINER_TYPE = Registry.register(Registries.SCREEN_HANDLER, CONTAINER_ID,
-            new ExtendedScreenHandlerType<>(BackpackScreenHandler::new));
+
+    // public static final InmisConfig CONFIG = OmegaConfig.register(InmisConfig.class);
+    public static InmisClothConfig CONFIG = new InmisClothConfig();
+
+    public static final ScreenHandlerType<BackpackScreenHandler> BACKPACK_SCREEN_HANDLER = new ExtendedScreenHandlerType<BackpackScreenHandler, BackpackScreenPacket>(
+            BackpackScreenHandler::new, BackpackScreenPacket.PACKET_CODEC);
+
     public static final List<BackpackItem> BACKPACKS = new ArrayList<>();
     public static final Item ENDER_POUCH = Registry.register(Registries.ITEM, id("ender_pouch"), new EnderBackpackItem());
+
+    public static final ComponentType<BackpackComponent> BACKPACK_COMPONENT = registerComponent("backpack", builder -> builder.codec(BackpackComponent.CODEC).packetCodec(BackpackComponent.PACKET_CODEC));
+
 
     @Override
     public void onInitialize() {
@@ -61,15 +68,19 @@ public class Inmis implements ModInitializer {
         Registry.register(Registries.ITEM_GROUP, GROUP,
                 FabricItemGroup.builder().icon(() -> new ItemStack(Registries.ITEM.get(id("frayed_backpack")))).displayName(Text.translatable("itemGroup.inmis.backpack")).build());
 
-        InmisConfig defaultConfig = new InmisConfig();
+
+        AutoConfig.register(InmisClothConfig.class, JanksonConfigSerializer::new);
+        CONFIG = AutoConfig.getConfigHolder(InmisClothConfig.class).getConfig();
+
+        // InmisConfig defaultConfig = new InmisConfig();
 
         for (BackpackInfo backpack : Inmis.CONFIG.backpacks) {
-            FabricItemSettings settings = new FabricItemSettings().maxCount(1);
+            Item.Settings settings = new Item.Settings().maxCount(1);
 
             // If this config option is true, allow players to place backpacks inside the
             // chest slot in their armor inventory.
             if (Inmis.CONFIG.allowBackpacksInChestplate) {
-                settings.equipmentSlot(stack -> EquipmentSlot.CHEST);
+                settings.equipmentSlot((entity, stack) -> EquipmentSlot.CHEST);
             }
 
             // setup fireproof item settings
@@ -79,7 +90,7 @@ public class Inmis implements ModInitializer {
 
             // old config instances do not have the sound stuff
             if (backpack.getOpenSound() == null) {
-                Optional<BackpackInfo> any = defaultConfig.backpacks.stream().filter(info -> info.getName().equals(backpack.getName())).findAny();
+                Optional<BackpackInfo> any = CONFIG.backpacks.stream().filter(info -> info.getName().equals(backpack.getName())).findAny();
                 any.ifPresent(backpackInfo -> backpack.setOpenSound(backpackInfo.getOpenSound()));
 
                 // if it is STILL null, log an error and set a default
@@ -94,10 +105,10 @@ public class Inmis implements ModInitializer {
             if (TRINKETS_LOADED && CONFIG.enableTrinketCompatibility) {
                 item = TrinketCompat.createTrinketBackpack(backpack, settings);
             } else {
-                item = backpack.isDyeable() ? new DyeableBackpackItem(backpack, settings) : new BackpackItem(backpack, settings);
+                item = new BackpackItem(backpack, settings);
             }
 
-            BackpackItem registered = Registry.register(Registries.ITEM, new Identifier("inmis", backpack.getName().toLowerCase() + "_backpack"), item);
+            BackpackItem registered = Registry.register(Registries.ITEM, Identifier.of("inmis", backpack.getName().toLowerCase() + "_backpack"), item);
             BACKPACKS.add(registered);
             ItemGroupEvents.modifyEntriesEvent(GROUP).register(entries -> entries.add(registered));
             // Register to the TrinketsApi if both conditions are true.
@@ -107,6 +118,7 @@ public class Inmis implements ModInitializer {
             }
         }
         ItemGroupEvents.modifyEntriesEvent(GROUP).register(entries -> entries.add(ENDER_POUCH));
+        Registry.register(Registries.SCREEN_HANDLER, "inmis:backpack", BACKPACK_SCREEN_HANDLER);
     }
 
     private void setupTrinkets() {
@@ -115,40 +127,30 @@ public class Inmis implements ModInitializer {
         }
     }
 
-    public static boolean isBackpackEmpty(ItemStack stack) {
-        NbtList tag = stack.getOrCreateNbt().getList("Inventory", NbtElement.COMPOUND_TYPE);
-
-        // If any inventory element in the Backpack stack is non-empty, return false;
-        for (NbtElement element : tag) {
-            NbtCompound stackTag = (NbtCompound) element;
-            ItemStack backpackStack = ItemStack.fromNbt(stackTag.getCompound("Stack"));
-            if (!backpackStack.isEmpty()) {
-                return false;
-            }
-        }
-
-        return true;
+    private static <T> ComponentType<T> registerComponent(String id, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
+        return Registry.register(Registries.DATA_COMPONENT_TYPE, id, builderOperator.apply(ComponentType.builder()).build());
     }
 
+
+    public static boolean isBackpackEmpty(ItemStack stack) {
+        return stack.get(BACKPACK_COMPONENT) == null || stack.get(BACKPACK_COMPONENT).getSimpleInventory().isEmpty();
+    }
+
+    @Nullable
     public static List<ItemStack> getBackpackContents(ItemStack stack) {
-        List<ItemStack> stacks = new ArrayList<>();
-        NbtList tag = stack.getOrCreateNbt().getList("Inventory", NbtElement.COMPOUND_TYPE);
-
-        // If any inventory element in the Backpack stack is non-empty, return false;
-        for (NbtElement element : tag) {
-            NbtCompound stackTag = (NbtCompound) element;
-            ItemStack backpackStack = ItemStack.fromNbt(stackTag.getCompound("Stack"));
-            stacks.add(backpackStack);
+        if (stack.get(BACKPACK_COMPONENT) != null) {
+            return stack.get(BACKPACK_COMPONENT).getSimpleInventory().getHeldStacks();
         }
-
-        return stacks;
+        return null;
     }
 
     public static void wipeBackpack(ItemStack stack) {
-        stack.getOrCreateNbt().remove("Inventory");
+        if (stack.get(BACKPACK_COMPONENT) != null) {
+            stack.get(BACKPACK_COMPONENT).getSimpleInventory().clear();
+        }
     }
 
     public static Identifier id(String name) {
-        return new Identifier("inmis", name);
+        return Identifier.of("inmis", name);
     }
 }

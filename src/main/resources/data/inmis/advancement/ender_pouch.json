@@ -1,18 +1,19 @@
 {
     "display": {
         "title": {
-            "translate": "inmis.advancement.bejeweled_backpack.title"
+            "translate": "inmis.advancement.ender_pouch.title"
         },
         "description": {
-            "translate": "inmis.advancement.bejeweled_backpack.description"
+            "translate": "inmis.advancement.ender_pouch.description"
         },
         "icon": {
-            "item": "inmis:bejeweled_backpack"
+            "id": "inmis:ender_pouch"
         },
         "frame": "task",
         "show_toast": true,
         "announce_to_chat": true,
-        "hidden": false
+        "hidden": true,
+        "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
     },
     "criteria": {
         "backpack": {
@@ -21,12 +22,12 @@
                 "items": [
                     {
                         "items": [
-                            "inmis:bejeweled_backpack"
-                            ]
+                            "inmis:ender_pouch"
+                        ]
                     }
                 ]
             }
         }
     },
-    "parent": "inmis:gilded_backpack"
+    "parent": "inmis:frayed_backpack"
 }

@@ -8,10 +8,8 @@ import draylar.inmis.Inmis;
 import draylar.inmis.client.TrinketBackpackRenderer;
 import draylar.inmis.config.BackpackInfo;
 import draylar.inmis.item.BackpackItem;
-import draylar.inmis.item.DyeableTrinketBackpackItem;
 import draylar.inmis.item.EnderBackpackItem;
 import draylar.inmis.item.TrinketBackpackItem;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.util.TriState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -24,7 +22,7 @@ public class TrinketCompat {
 
     public static void registerTrinketPredicate() {
         TrinketsApi.registerTrinketPredicate(Inmis.id("any_backpack"), (stack, slot, entity) -> {
-            if(stack.getItem() instanceof BackpackItem || stack.getItem() instanceof EnderBackpackItem) {
+            if (stack.getItem() instanceof BackpackItem || stack.getItem() instanceof EnderBackpackItem) {
                 return TriState.TRUE;
             }
 
@@ -34,11 +32,11 @@ public class TrinketCompat {
 
     public static void spillTrinketInventory(PlayerEntity player) {
         Optional<TrinketComponent> component = TrinketsApi.getTrinketComponent(player);
-        if(component.isPresent()) {
+        if (component.isPresent()) {
             TrinketComponent trinketComponent = component.get();
             for (Pair<SlotReference, ItemStack> pair : trinketComponent.getAllEquipped()) {
                 ItemStack stack = pair.getRight();
-                if(stack.getItem() instanceof BackpackItem) {
+                if (stack.getItem() instanceof BackpackItem) {
                     Inmis.getBackpackContents(stack).forEach(backpackItem -> player.dropItem(backpackItem, true, false));
                     Inmis.wipeBackpack(stack);
                     player.dropItem(stack, true, false);
@@ -52,8 +50,8 @@ public class TrinketCompat {
         TrinketsApi.registerTrinket(item, (TrinketBackpackItem) item);
     }
 
-    public static BackpackItem createTrinketBackpack(BackpackInfo backpack, FabricItemSettings settings) {
-        return backpack.isDyeable() ? new DyeableTrinketBackpackItem(backpack, settings) : new TrinketBackpackItem(backpack, settings);
+    public static BackpackItem createTrinketBackpack(BackpackInfo backpack, Item.Settings settings) {
+        return new TrinketBackpackItem(backpack, settings);
     }
 
     public static void registerTrinketRenderer(BackpackItem backpack) {

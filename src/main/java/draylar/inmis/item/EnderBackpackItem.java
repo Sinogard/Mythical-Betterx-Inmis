@@ -28,13 +28,13 @@ public class EnderBackpackItem extends Item {
         EnderChestInventory enderChestInventory = player.getEnderChestInventory();
 
         if (Inmis.CONFIG.playSound) {
-            if (world.isClient) {
+            if (world.isClient()) {
                 world.playSound(player, player.getBlockPos(), SoundEvents.BLOCK_ENDER_CHEST_OPEN, SoundCategory.PLAYERS, 1, 1);
             }
         }
 
         if (enderChestInventory != null) {
-            if (!world.isClient) {
+            if (!world.isClient()) {
                 player.openHandledScreen(new SimpleNamedScreenHandlerFactory(
                         (i, playerInventory, playerEntity) -> GenericContainerScreenHandler.createGeneric9x3(i, playerInventory, enderChestInventory), CONTAINER_NAME));
 

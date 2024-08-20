@@ -1,19 +1,18 @@
 {
     "display": {
         "title": {
-            "translate": "inmis.advancement.frayed_backpack.title"
+            "translate": "inmis.advancement.endless_backpack.title"
         },
         "description": {
-            "translate": "inmis.advancement.frayed_backpack.description"
+            "translate": "inmis.advancement.endless_backpack.description"
         },
         "icon": {
-            "item": "inmis:frayed_backpack"
+            "id": "inmis:endless_backpack"
         },
-        "frame": "task",
+        "frame": "challenge",
         "show_toast": true,
         "announce_to_chat": true,
-        "hidden": false,
-        "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
+        "hidden": false
     },
     "criteria": {
         "backpack": {
@@ -22,11 +21,12 @@
                 "items": [
                     {
                         "items": [
-                            "inmis:frayed_backpack"
-                        ]
+                            "inmis:endless_backpack"
+                            ]
                     }
                 ]
             }
         }
-    }
+    },
+    "parent": "inmis:withered_backpack"
 }

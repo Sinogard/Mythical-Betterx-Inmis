@@ -7,13 +7,13 @@
   ],
   "key": {
     "#": {
-      "item": "minecraft:iron_ingot"
+      "item": "minecraft:leather"
     },
     "X": {
-      "item": "inmis:frayed_backpack"
+      "item": "minecraft:ender_chest"
     }
   },
   "result": {
-    "item": "inmis:plated_backpack"
+    "id": "inmis:ender_pouch"
   }
 }

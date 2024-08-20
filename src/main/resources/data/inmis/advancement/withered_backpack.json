@@ -1,13 +1,13 @@
 {
     "display": {
         "title": {
-            "translate": "inmis.advancement.blazing_backpack.title"
+            "translate": "inmis.advancement.withered_backpack.title"
         },
         "description": {
-            "translate": "inmis.advancement.blazing_backpack.description"
+            "translate": "inmis.advancement.withered_backpack.description"
         },
         "icon": {
-            "item": "inmis:blazing_backpack"
+            "id": "inmis:withered_backpack"
         },
         "frame": "goal",
         "show_toast": true,
@@ -21,8 +21,8 @@
                 "items": [
                     {
                         "items": [
-                            "inmis:blazing_backpack"
-                         ]
+                            "inmis:withered_backpack"
+                            ]
                     }
                 ]
             }

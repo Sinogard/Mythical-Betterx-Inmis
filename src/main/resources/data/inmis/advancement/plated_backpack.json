@@ -1,19 +1,18 @@
 {
     "display": {
         "title": {
-            "translate": "inmis.advancement.ender_pouch.title"
+            "translate": "inmis.advancement.plated_backpack.title"
         },
         "description": {
-            "translate": "inmis.advancement.ender_pouch.description"
+            "translate": "inmis.advancement.plated_backpack.description"
         },
         "icon": {
-            "item": "inmis:ender_pouch"
+            "id": "inmis:plated_backpack"
         },
         "frame": "task",
         "show_toast": true,
         "announce_to_chat": true,
-        "hidden": true,
-        "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
+        "hidden": false
     },
     "criteria": {
         "backpack": {
@@ -22,7 +21,7 @@
                 "items": [
                     {
                         "items": [
-                            "inmis:ender_pouch"
+                            "inmis:plated_backpack"
                         ]
                     }
                 ]

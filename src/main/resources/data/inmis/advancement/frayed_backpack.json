@@ -1,18 +1,19 @@
 {
     "display": {
         "title": {
-            "translate": "inmis.advancement.plated_backpack.title"
+            "translate": "inmis.advancement.frayed_backpack.title"
         },
         "description": {
-            "translate": "inmis.advancement.plated_backpack.description"
+            "translate": "inmis.advancement.frayed_backpack.description"
         },
         "icon": {
-            "item": "inmis:plated_backpack"
+            "id": "inmis:frayed_backpack"
         },
         "frame": "task",
         "show_toast": true,
         "announce_to_chat": true,
-        "hidden": false
+        "hidden": false,
+        "background": "minecraft:textures/gui/advancements/backgrounds/stone.png"
     },
     "criteria": {
         "backpack": {
@@ -21,12 +22,11 @@
                 "items": [
                     {
                         "items": [
-                            "inmis:plated_backpack"
+                            "inmis:frayed_backpack"
                         ]
                     }
                 ]
             }
         }
-    },
-    "parent": "inmis:frayed_backpack"
+    }
 }
