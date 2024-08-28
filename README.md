@@ -10,7 +10,7 @@
 ![](https://img.shields.io/github/license/Draylar/inmis)
 
 Inmis is a Backpack mod built for the [Fabric Loader](https://fabricmc.net/). 
-It requires [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api) to be installed separately.
+It requires [Fabric API](https://www.curseforge.com/minecraft/mc-mods/fabric-api) (and [Cloth Config API](https://www.curseforge.com/minecraft/mc-mods/cloth-config) since v2.8.0) to be installed separately.
 By default, you can right-click a Backpack to open it, or press `B` to open the first Backpack available in your inventory.
 Backpacks can be equipped in the Chestplate armor slot and opened through the same keybind.
 
