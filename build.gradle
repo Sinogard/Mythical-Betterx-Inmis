@@ -40,10 +40,6 @@ dependencies {
         exclude group: "me.shedaniel.cloth"
         exclude group: "net.fabricmc.fabric-api"
     }
-    // cloth config
-    modCompileOnly modRuntimeOnly ("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") {
-    	exclude(group: "net.fabricmc.fabric-api")
-  	}
 }
 
 processResources {
@@ -55,7 +51,6 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    // Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
     it.options.release = 21
 }
 
