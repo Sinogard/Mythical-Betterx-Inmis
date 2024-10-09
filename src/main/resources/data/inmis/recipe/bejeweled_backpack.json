@@ -1,22 +1,16 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "#e#",
-    "eXe",
-    "#e#"
-  ],
-  "key": {
-    "#": {
-      "item": "minecraft:diamond"
-    },
-    "X": {
-      "item": "inmis:gilded_backpack"
-    },
-    "e": {
-      "item": "minecraft:emerald"
-    }
+  "type": "minecraft:smithing_transform",
+  "template": {},
+  "base": {
+    "item": "inmis:promethium_backpack",
+    "tag": "minecraft:1"
+  },
+  "addition": {
+    "item": "minecraft:diamond_block",
+    "tag": "minecraft:1"
   },
   "result": {
-    "id": "inmis:bejeweled_backpack"
+    "id": "inmis:bejewled_backpack",
+    "count": 1
   }
 }

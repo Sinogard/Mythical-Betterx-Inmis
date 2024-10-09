@@ -1,22 +1,19 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "b#b",
-    "bXb",
-    "bbb"
-  ],
-  "key": {
-    "#": {
-      "item": "minecraft:nether_star"
-    },
-    "b": {
-      "item": "minecraft:soul_sand"
-    },
-    "X": {
-      "item": "inmis:bejeweled_backpack"
-    }
+  "type": "minecraft:smithing_transform",
+  "template": {
+    "item": "minecraft:netherite_upgrade_smithing_template",
+    "tag": "minecraft:1"
+  },
+  "base": {
+    "item": "inmis:hallowed_backpack",
+    "tag": "minecraft:1"
+  },
+  "addition": {
+    "item": "minecraft:netherite_ingot",
+    "tag": "minecraft:1"
   },
   "result": {
-    "id": "inmis:withered_backpack"
+    "id": "inmis:withered_backpack",
+    "count": 1
   }
 }

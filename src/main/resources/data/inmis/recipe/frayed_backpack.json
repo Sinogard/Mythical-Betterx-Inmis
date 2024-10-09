@@ -1,19 +1,16 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "###",
-    "#X#",
-    "###"
-  ],
-  "key": {
-    "#": {
-      "item": "minecraft:leather"
-    },
-    "X": {
-      "item": "minecraft:chest"
-    }
+  "type": "minecraft:smithing_transform",
+  "template": {},
+  "base": {
+    "item": "inmis:baby_backpack",
+    "tag": "minecraft:1"
+  },
+  "addition": {
+    "item": "minecraft:shulkerbox",
+    "tag": "minecraft:1"
   },
   "result": {
-    "id": "inmis:frayed_backpack"
+    "id": "inmis:frayed_backpack",
+    "count": 1
   }
 }

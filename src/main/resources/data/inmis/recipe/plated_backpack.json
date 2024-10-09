@@ -1,19 +1,16 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "###",
-    "#X#",
-    "###"
-  ],
-  "key": {
-    "#": {
-      "item": "minecraft:iron_ingot"
-    },
-    "X": {
-      "item": "inmis:frayed_backpack"
-    }
+  "type": "minecraft:smithing_transform",
+  "template": {},
+  "base": {
+    "item": "inmis:copper_backpack",
+    "tag": "minecraft:1"
+  },
+  "addition": {
+    "item": "mythicmetals:iron_block",
+    "tag": "minecraft:1"
   },
   "result": {
-    "id": "inmis:plated_backpack"
+    "id": "inmis:plated_backpack",
+    "count": 1
   }
 }

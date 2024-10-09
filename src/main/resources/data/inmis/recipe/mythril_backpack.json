@@ -2,15 +2,15 @@
   "type": "minecraft:smithing_transform",
   "template": {},
   "base": {
-    "item": "inmis:withered_backpack",
+    "item": "inmis:adamantite_backpack",
     "tag": "minecraft:1"
   },
   "addition": {
-    "item": "minecraft:dragon_head",
+    "item": "mythicmetals:mythril_block",
     "tag": "minecraft:1"
   },
   "result": {
-    "id": "inmis:endless_backpack",
+    "id": "inmis:mythril_backpack",
     "count": 1
   }
 }
